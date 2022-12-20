@@ -16,7 +16,8 @@ const DisplayError = () => {
     };
     return (
       <div>
-        <p className="text-red-600">Some went wring</p>
+        <p className="text-red-600">Admin Email : mojammel127@gmail.com</p>
+        <p className="text-red-600">Admin password : 123456</p>
         <p className="text-red-400">{error.statusText || error.message}</p>
         <h4 className="text-3xl">
           place <button onClick={handelLogOut}>log out</button> and log back

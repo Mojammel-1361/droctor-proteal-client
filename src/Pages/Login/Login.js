@@ -1,15 +1,18 @@
 import { GoogleAuthProvider } from 'firebase/auth';
 import React, { useContext, useState } from 'react';
 import { useForm } from "react-hook-form";
+import { toast } from 'react-hot-toast';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from '../../Context/AuthProvider';
 import useToken from '../../hookes/useToken';
+import Lodding from '../Shared/Lodding/Lodding';
 
 const Login = () => {
     const { register, handleSubmit, formState: {errors} } = useForm();
     const provider = new GoogleAuthProvider();
     const { LoginUser, googleLogin } = useContext(AuthContext);
     const [loginError, setLoginError]= useState('');
+    const [lodding, setLodding] = useState(false)
     const [loginUserEmail, setLoginUserEmail] = useState('');
     const [token] = useToken(loginUserEmail);
     const location = useLocation();
@@ -25,12 +28,15 @@ const Login = () => {
 
 
     const handleGoogle = () => {
+      setLodding(true);
       googleLogin(provider)
         .then((result) => {
           const user = result.user;
           console.log(user);
+          setLodding(false);
           setLoginUserEmail(user.email);
-          
+          navigate('/')
+          toast.success('login success')
         })
         .catch((err) => console.error(err));
     };
@@ -38,12 +44,15 @@ const Login = () => {
 
 
     const handleLogin = data =>{
+      setLodding(true);
         console.log(data);
         setLoginError('');
         LoginUser(data.email, data.password)
           .then((result) => {
             const user = result.user;
             console.log(user);
+            setLodding(false);
+            toast.success("login success");
             setLoginUserEmail(data.email);
             
           })
@@ -51,6 +60,9 @@ const Login = () => {
             setLoginError(error.message)
             console.log(error)
           });
+    }
+    if (lodding) {
+      return <Lodding></Lodding>;
     }
     return (
       <div className="h-[800px] grid justify-center items-center">
@@ -62,7 +74,7 @@ const Login = () => {
 
             <div className="form-control w-full">
               <label className="label">
-                <span className="label-text"> your Email</span>
+                <p className="label-text">Email (admin email: mojammel127@gmail.com)</p>
               </label>
               <input
                 {...register("email", { required: "email is required" })}
@@ -79,7 +91,7 @@ const Login = () => {
 
             <div className="form-control w-full ">
               <label className="label">
-                <span className="label-text"> password</span>
+                <span className="label-text"> password (admin password: 123456)</span>
               </label>
               <input
                 {...register("password", {
